@@ -1,0 +1,35 @@
+name: Build and Push
+
+on:
+  workflow_dispatch:
+    inputs:
+      mirror:
+        default: 'http://archive.ubuntu.com/ubuntu'
+      filename:
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: nyow/deb-builder:ha
+    steps:
+      - name: Install wget
+        run: apt install -y --no-install-recommends wget
+      - name: Download source file
+        run: wget "${{ github.event.inputs.mirror }}/pool/main/c/${{ github.event.inputs.filename }}"
+      - name: Extract source file
+        run: tar xf ${{ github.event.inputs.filename }}
+      - name: Build the package
+        run: |
+          cd casper
+          mk-build-deps --install --tool 'apt -y --no-install-recommends' debian/control
+          dpkg-buildpackage -us -uc
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4.3.5
+        with:
+          name: build-artifacts
+          path: |
+            *.dsc
+            *.tar.xz
+            *.deb
