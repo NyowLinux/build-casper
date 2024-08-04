@@ -14,8 +14,6 @@ jobs:
     container:
       image: nyow/deb-builder:ha
     steps:
-      - name: Install wget
-        run: apt install -y --no-install-recommends wget
       - name: Download source file
         run: wget "${{ github.event.inputs.mirror }}/pool/main/c/casper/${{ github.event.inputs.filename }}"
       - name: Extract source file
