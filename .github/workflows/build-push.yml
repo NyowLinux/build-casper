@@ -5,7 +5,9 @@ on:
     inputs:
       mirror:
         default: 'http://archive.ubuntu.com/ubuntu'
-      filename:
+      directory:
+        default: 'pool/main/c/casper'
+      version:
         required: true
 
 jobs:
@@ -15,12 +17,18 @@ jobs:
       image: nyow/deb-builder:ha
     steps:
       - name: Download source file
-        run: wget "${{ github.event.inputs.mirror }}/pool/main/c/casper/${{ github.event.inputs.filename }}"
+        run: wget "${{ github.event.inputs.mirror }}/${{ github.event.inputs.directory }}/casper_${{ github.event.inputs.version }}.tar.xz"
       - name: Extract source file
         run: tar xf ${{ github.event.inputs.filename }}
       - name: Build the package
+        env:
+          DEBFULLNAME: ${{ vars.DEBFULLNAME }}
+          DEBEMAIL: ${{ vars.DEBEMAIL }}
         run: |
           cd casper
+          sed -i 's/USERNAME="ubuntu"/USERNAME="nyow"/g' casper.conf
+          sed -i 's/HOST="ubuntu"/HOST="nyow"/g' casper.conf
+          dch -v ${{ github.event.inputs.version }}nyow --force-distribution -D ha "Reconfigure for Nyow."
           mk-build-deps --install --tool 'apt -y --no-install-recommends' debian/control
           dpkg-buildpackage -us -uc
       - name: Upload build artifacts
