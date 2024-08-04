@@ -32,8 +32,8 @@ jobs:
           sed -i 's/HOST="ubuntu"/HOST="nyow"/g' casper.conf
           dch -v ${{ github.event.inputs.version }}nyow --force-distribution -D ha "Reconfigure for Nyow."
           mk-build-deps --install --tool 'apt -y --no-install-recommends' debian/control
-          dpkg-buildpackage -us -uc
           rm -f casper-build-deps*
+          dpkg-buildpackage -us -uc
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4.3.5
         with:
