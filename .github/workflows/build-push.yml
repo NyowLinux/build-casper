@@ -15,11 +15,13 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: nyow/deb-builder:ha
+    env:
+      SOURCE_FILENAME: casper_${{ github.event.inputs.version }}.tar.xz
     steps:
       - name: Download source file
-        run: wget "${{ github.event.inputs.mirror }}/${{ github.event.inputs.directory }}/casper_${{ github.event.inputs.version }}.tar.xz"
+        run: wget "${{ github.event.inputs.mirror }}/${{ github.event.inputs.directory }}/$SOURCE_FILENAME"
       - name: Extract source file
-        run: tar xf casper_${{ github.event.inputs.version }}.tar.xz
+        run: tar xf $SOURCE_FILENAME && rm $SOURCE_FILENAME
       - name: Build the package
         env:
           DEBFULLNAME: ${{ vars.DEBFULLNAME }}
@@ -31,6 +33,7 @@ jobs:
           dch -v ${{ github.event.inputs.version }}nyow --force-distribution -D ha "Reconfigure for Nyow."
           mk-build-deps --install --tool 'apt -y --no-install-recommends' debian/control
           dpkg-buildpackage -us -uc
+          rm -f casper-build-deps*
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4.3.5
         with:
