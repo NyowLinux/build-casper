@@ -42,13 +42,12 @@ jobs:
             *.dsc
             *.tar.xz
             *.deb
-      - name: Create a tag
-        run: |
-          apt install -y --no-install-recommends git
-          git tag ${{ github.event.inputs.version }}
-          git push origin ${{ github.event.inputs.version }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          custom_tag: ${{ github.event.inputs.version }}
 
   release:
     needs: build
