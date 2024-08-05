@@ -79,11 +79,11 @@ jobs:
         run: |
           tar -cJvf $DIRECTORY_NAME.tar.xz -C $DIRECTORY_NAME .
       - name: Push artifact to Nyow archive
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        uses: Dylan700/sftp-upload-action@latest
         with:
             username: ${{ secrets.SFTP_USERNAME }}
             server: ${{ secrets.SFTP_HOST }}
             port: ${{ secrets.SFTP_PORT }}
-            ssh_private_key: ${{ secrets.SFTP_PRIVATE_KEY }}
-            local_path: './${{ env.DIRECTORY_NAME }}.tar.xz'
-            remote_path: '/ha-unstable'
+            key: ${{ secrets.SFTP_PRIVATE_KEY }}
+            uploads: |
+              ./${{ env.DIRECTORY_NAME }}.tar.xz => /ha-unstable/
