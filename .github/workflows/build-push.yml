@@ -81,8 +81,9 @@ jobs:
       - name: Push artifact to Nyow archive
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
-            username: '${{ secrets.SFTP_USERNAME }}'
-            server: '${{ secrets.SFTP_HOST }}'
+            username: ${{ secrets.SFTP_USERNAME }}
+            server: ${{ secrets.SFTP_HOST }}
+            port: ${{ secrets.SFTP_PORT }}
             ssh_private_key: ${{ secrets.SFTP_PRIVATE_KEY }}
             local_path: './${{ env.DIRECTORY_NAME }}.tar.xz'
             remote_path: '/ha-unstable'
