@@ -78,12 +78,13 @@ jobs:
       - name: Compress artifact directory
         run: |
           tar -cJvf $DIRECTORY_NAME.tar.xz -C $DIRECTORY_NAME .
-      - name: Push artifact to Nyow archive
-        uses: Dylan700/sftp-upload-action@latest
+      - name: Set up SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
         with:
-            username: ${{ secrets.SFTP_USERNAME }}
-            server: ${{ secrets.SFTP_HOST }}
-            port: ${{ secrets.SFTP_PORT }}
-            key: ${{ secrets.SFTP_PRIVATE_KEY }}
-            uploads: |
-              ./${{ env.DIRECTORY_NAME }}.tar.xz => /ha-unstable/
+          ssh-private-key: ${{ secrets.SFTP_PRIVATE_KEY }}
+      - name: Push artifact to Nyow archive
+        run: |
+          sftp -i ~/.ssh/id_ed25519 -P ${{ secrets.SFTP_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SFTP_USERNAME }}@${{ secrets.SFTP_HOST }} << EOF
+          put $DIRECTORY_NAME.tar.xz => /ha-unstable/
+          bye
+          EOF
