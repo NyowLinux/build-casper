@@ -85,6 +85,6 @@ jobs:
       - name: Push artifact to Nyow archive
         run: |
           sftp -i ~/.ssh/id_ed25519 -P ${{ secrets.SFTP_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SFTP_USERNAME }}@${{ secrets.SFTP_HOST }} << EOF
-          put $DIRECTORY_NAME.tar.xz => /ha-unstable/
+          put $DIRECTORY_NAME.tar.xz /ha-unstable/
           bye
           EOF
