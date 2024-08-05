@@ -42,3 +42,21 @@ jobs:
             *.dsc
             *.tar.xz
             *.deb
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          name: ${{ github.event.inputs.version }}
+          body: Release ${{ github.event.inputs.version }}
+          files: |
+            *.dsc
+            *.tar.xz
+            *.deb
