@@ -65,7 +65,7 @@ jobs:
             *.deb
 
   push:
-    needs: release
+    needs: build
     runs-on: ubuntu-latest
     env:
       DIRECTORY_NAME: casper_${{ github.event.inputs.version }}nyow
